@@ -1,0 +1,180 @@
+<!doctype html>
+<html lang="en"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="description" content="Vijay Connect Chennai car services for one-way trips, outstation travel, hourly rentals and nearby routes."><meta name="theme-color" content="#6d28d9"><meta name="robots" content="index,follow"><link rel="icon" href="logo-black.png" type="image/png"><link rel="manifest" href="manifest.webmanifest"><link rel="apple-touch-icon" href="logo-black.png">
+<meta property="og:type" content="website"><meta property="og:title" content="Vijay Connect | Chennai Car Services"><meta property="og:description" content="Book one-way trips, outstation travel and hourly rentals in Chennai. Easy WhatsApp booking and live cab tracking."><meta property="og:image" content="festival-drive-poster.webp"><meta name="twitter:card" content="summary_large_image">
+<link rel="preconnect" href="https://unpkg.com" crossorigin><link rel="preconnect" href="https://images.unsplash.com">
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"TaxiService","name":"Vijay Connect","description":"Chennai car services: one-way trips, outstation travel and hourly rentals.","telephone":"+91-8056631317","email":"contactvijaytechnocarft@gmail.com","areaServed":{"@type":"City","name":"Chennai"},"address":{"@type":"PostalAddress","addressLocality":"Chennai","addressRegion":"Tamil Nadu","addressCountry":"IN"},"logo":"logo-black.png","image":"logo-black.png"}</script><title id="siteTitle">Vijay Connect | Chennai Car Services</title><link rel="stylesheet" href="style.css">
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" crossorigin=""><style>
+#vcConfirmField[hidden],#vcForgotPassword[hidden]{display:none!important}
+.vcFromInputWrap{position:relative;display:flex;align-items:center}
+.vcFromInputWrap input{padding-right:42px!important}
+.vcClearLocationBtn{position:absolute;right:9px;top:50%;transform:translateY(-50%);width:27px;height:27px;border:0;border-radius:50%;background:#eee8f7;color:#5a20d6;font-size:18px;line-height:1;display:grid;place-items:center;cursor:pointer;font-weight:800}
+.vcClearLocationBtn:hover{background:#dfd4f3}
+</style>
+</head>
+<body><div class="vcAuthModal" id="vcAuthModal" aria-hidden="true">
+  <div class="vcAuthBackdrop" data-auth-skip></div>
+  <div class="vcAuthCard" role="dialog" aria-modal="true" aria-labelledby="vcAuthTitle">
+    <button class="vcAuthClose" type="button" data-auth-dismiss aria-label="Close sign in">×</button>
+    <div class="vcAuthBrand">VIJAY CONNECT</div>
+    <h2 id="vcAuthTitle">Welcome back</h2>
+    <p id="vcAuthLead">Login to continue your Vijay Connect journey.</p>
+    <div class="vcAuthMode" role="tablist" aria-label="Account access">
+      <button type="button" class="vcAuthModeBtn" id="vcLoginMode">Login</button>
+      <button type="button" class="vcAuthModeBtn active" id="vcRegisterMode">Signup</button>
+    </div>
+    <form id="vcAuthForm" novalidate>
+      <label>Email<input id="vcAuthEmail" type="email" autocomplete="email" required placeholder="Enter your email"></label>
+      <label>Password<input id="vcAuthPassword" type="password" autocomplete="new-password" required placeholder="Create password"></label>
+      <label id="vcConfirmField">Confirm Password<input id="vcAuthConfirm" type="password" autocomplete="new-password" placeholder="Confirm password"></label>
+      <button class="vcForgotBtn" type="button" id="vcForgotPassword" hidden>Forgot password?</button>
+      <button class="vcAuthSubmit" type="submit" id="vcAuthSubmit">Signup</button>
+    </form>
+    <div class="vcAuthSwitch" id="vcAuthSwitch">Already have an account? <button type="button" data-switch-login>Login</button></div>
+    <div class="vcAuthDivider" id="vcAuthDivider"><span>Or</span></div>
+    <div class="vcSocialStack">
+      <button type="button" class="vcFacebookBtn" id="vcFacebookBtn"><span class="vcFacebookIcon">f</span><span id="vcFacebookText">Signup with Facebook</span></button>
+      <button type="button" class="vcGoogleBtn" id="vcGoogleBtn"><span class="vcGoogleIcon">G</span><span id="vcGoogleText">Signup with Google</span></button>
+    </div>
+    <div class="vcAuthStatus" id="vcAuthStatus" role="status" aria-live="polite"></div>
+    <button class="vcAuthSkip" type="button" data-auth-skip>Skip for now</button>
+    <small id="vcAuthFootnote">Use a valid email. Email/password accounts must verify their email before first login.</small>
+  </div>
+</div>
+<div class="vcGreetingPopup" id="vcGreetingPopup" aria-hidden="true"><div class="vcGreetingCard"><button type="button" id="vcGreetingClose" aria-label="Close">×</button><div class="vcGreetingIcon">✦</div><span id="vcGreetingTime">GOOD AFTERNOON</span><h3 id="vcGreetingTitle">Welcome</h3><p id="vcGreetingText">Welcome to Vijay Connect.</p></div></div>
+<div class="vcBookingsModal" id="vcBookingsModal" aria-hidden="true">
+  <div class="vcBookingsBackdrop" data-bookings-close></div>
+  <section class="vcBookingsCard" role="dialog" aria-modal="true" aria-labelledby="vcBookingsTitle">
+    <button class="vcBookingsClose" type="button" data-bookings-close aria-label="Close">×</button>
+    <span class="vcSuccessEyebrow">VIJAY CONNECT</span>
+    <h2 id="vcBookingsTitle">My Bookings</h2>
+    <p class="vcBookingsLead">All your Vijay Connect trips in one place.</p>
+    <div id="vcBookingsList" class="vcBookingsList" aria-live="polite"></div>
+  </section>
+</div>
+<div class="vcBookingSuccess" id="vcBookingSuccess" aria-hidden="true">
+  <div class="vcBookingSuccessBackdrop" data-booking-success-close></div>
+  <div class="vcBookingSuccessCard" role="dialog" aria-modal="true" aria-labelledby="vcBookingSuccessTitle">
+    <button class="vcBookingSuccessClose" type="button" data-booking-success-close aria-label="Close">×</button>
+    <div class="vcSuccessIcon" aria-hidden="true">✓</div>
+    <span class="vcSuccessEyebrow">VIJAY CONNECT</span>
+    <h2 id="vcBookingSuccessTitle">Booking request ready</h2>
+    <p>Your request is ready. <b>Tap Send in WhatsApp</b> so the Vijay Connect team receives it. We will confirm your car and fare shortly.</p>
+    <div class="vcSuccessBookingId"><span>BOOKING ID</span><strong id="vcSuccessBookingId">VC-XXXXXX</strong></div>
+    <div class="vcSuccessSummary" id="vcSuccessSummary"></div>
+    <div class="vcSuccessActions">
+      <button type="button" class="btn purple" id="vcSuccessTrack">Track My Cab</button>
+      <a class="vcSuccessWhatsapp" id="vcSuccessWhatsapp" href="#" target="_blank" rel="noopener">Open WhatsApp <span>→</span></a>
+    </div>
+    <button type="button" class="vcSuccessHome" data-booking-success-close>Back to website</button>
+  </div>
+</div>
+<div class="festivalSplash" id="festivalSplash" aria-hidden="true"><img src="festival-drive-poster.webp" alt="Vijay Connect festive drive"><span class="splashMark">VIJAY CONNECT • CHENNAI CAR SERVICE</span></div>
+
+<header class="nav"><a class="brand" href="#home"><img class="logoImg" src="logo-black.png" alt="Vijay Connect logo"><span class="brandName">VIJAY CONNECT</span></a>
+<nav class="desktopNav"><a class="navlink active" id="navHome" href="#home">Home</a><a class="navlink" id="navAbout" href="#about">About Us</a><a class="navlink" id="navServices" href="#services">Car Services</a><a class="navlink" id="navTrips" href="#trips">Trips</a><a class="navlink" id="navContact" href="#contact">Contact</a></nav>
+<div class="vcGreetingBar" id="vcGreetingBar" hidden aria-live="polite"><span id="vcGreetingBarText"></span></div>
+<button class="vcHeaderBookings" id="vcHeaderBookings" type="button">My Bookings</button><button class="vcHeaderAuth" id="vcHeaderAuth" type="button">Login / Sign up</button><a class="appbtn" id="headerBookBtn" href="#contact">Book a Car</a><button class="mobileMenuBtn" id="mobileMenuBtn" type="button" aria-label="Open menu" aria-expanded="false"><span></span><span></span><span></span></button></header>
+<div class="mobileMenu" id="mobileMenu" aria-hidden="true"><div class="mobileMenuPanel"><div class="mobileMenuTop"><span>VIJAY CONNECT</span><button id="mobileMenuClose" type="button" aria-label="Close menu">×</button></div><nav class="mobileNav"><a class="navlink active" data-mirror="navHome" href="#home">Home</a><a class="navlink" data-mirror="navAbout" href="#about">About Us</a><a class="navlink" data-mirror="navServices" href="#services">Car Services</a><a class="navlink" data-mirror="navTrips" href="#trips">Trips</a><a class="navlink" data-mirror="navContact" href="#contact">Contact</a></nav><div class="vcMobileGreeting" id="vcMobileGreeting" hidden></div><button class="mobileBookings" id="vcMobileBookings" type="button">My Bookings</button><button class="mobileSignIn" id="vcMobileSignIn" type="button">Login / Sign up</button><a class="mobileBook" id="mobileBookBtn" href="#contact">Book a Car <span>→</span></a></div></div>
+
+<div class="float" aria-label="Quick contact actions">
+  <a class="floatBook" href="#contact" aria-label="Book a Cab"><span class="floatBookIcon"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 11.2 6.8 6.8A2 2 0 0 1 8.65 5.5h6.7a2 2 0 0 1 1.85 1.3L19 11.2A2.5 2.5 0 0 1 21 13.6V17a1.5 1.5 0 0 1-1.5 1.5H19V20h-2v-1.5H7V20H5v-1.5h-.5A1.5 1.5 0 0 1 3 17v-3.4a2.5 2.5 0 0 1 2-2.4Zm2.2-3.7-1.35 3.2h12.3l-1.35-3.2a.45.45 0 0 0-.42-.3H7.62a.45.45 0 0 0-.42.3ZM7 14.2a1.25 1.25 0 1 0 0 2.5 1.25 1.25 0 0 0 0-2.5Zm10 0a1.25 1.25 0 1 0 0 2.5 1.25 1.25 0 0 0 0-2.5Z" fill="currentColor"/></svg></span></a>
+  <a href="tel:+918056631317" aria-label="Call Vijay Connect"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M7.1 3.5 9.7 3a1.7 1.7 0 0 1 1.9 1l1.15 2.7a1.7 1.7 0 0 1-.4 1.9L10.9 10a12.1 12.1 0 0 0 3.1 3.1l1.4-1.45a1.7 1.7 0 0 1 1.9-.4l2.7 1.15a1.7 1.7 0 0 1 1 1.9l-.5 2.6A2.3 2.3 0 0 1 18.2 19C10.9 19 5 13.1 5 5.8a2.3 2.3 0 0 1 2.1-2.3Z" fill="currentColor"/></svg></a>
+  <a href="https://mail.google.com/mail/?view=cm&fs=1&to=contactvijaytechnocarft@gmail.com" target="_blank" rel="noopener" aria-label="Email Vijay Connect"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3.5 5h17A1.5 1.5 0 0 1 22 6.5v11A1.5 1.5 0 0 1 20.5 19h-17A1.5 1.5 0 0 1 2 17.5v-11A1.5 1.5 0 0 1 3.5 5Zm0 2v.3l8.5 5.55 8.5-5.55V7l-8.5 5.55L3.5 7Z" fill="currentColor"/></svg></a>
+</div>
+
+<section id="home" class="hero"><div id="slides"></div>
+<div class="heroGlow"></div><div class="heroShade"></div>
+<div class="heroText"><span class="pill" id="heroPill">CHENNAI • CAR SERVICE</span><h1 id="title"></h1><p id="desc"></p>
+<div><a class="btn purple" id="heroExploreBtn" href="#trips">Explore Trips</a><a class="btn white" id="heroBookBtn" href="#contact">Book Now</a></div></div>
+<button class="arr l" onclick="prev()">‹</button><button class="arr r" onclick="next()">›</button><div class="dots" id="dots"></div></section>
+
+<section id="trips" class="tripSection"><span id="services" style="position:relative;top:-80px"></span><div class="wrap"><div class="sectionHead"><span id="tripsEyebrow">OUR SERVICES</span><h2 id="tripsTitle">Trips Made Easy</h2><p id="tripsDesc">Choose the right car service for your journey in Chennai and nearby areas.</p></div>
+<div class="tripCards"><article class="interactiveCard"><div class="photo p1"></div><div class="cardBody"><h3 id="trip1Title">One Way Trip</h3><p id="trip1Desc">Comfortable point-to-point car travel for your everyday Chennai journeys.</p><a id="trip1Btn" href="#contact" data-book-service="One Way Trip">Book Now →</a></div></article>
+<article class="interactiveCard featured"><div class="photo p2"></div><div class="cardBody"><h3 id="trip2Title">Outstation</h3><p id="trip2Desc">Travel beyond Chennai with a comfortable car and flexible trip plans.</p><a id="trip2Btn" href="#contact" data-book-service="Outstation">Book Now →</a></div></article>
+<article class="interactiveCard"><div class="photo p3"></div><div class="cardBody"><h3 id="trip3Title">Hourly Rental</h3><p id="trip3Desc">Keep a car with you for multiple stops and flexible travel plans.</p><a id="trip3Btn" href="#contact" data-book-service="Hourly Rental">Book Now →</a></div></article></div></div></section>
+
+<!-- Premium business-style offer banner: placed after services so visitors see the current offer after understanding the service. -->
+<section class="festivalCampaign premiumOffers" id="festivalCampaign" aria-label="Latest offers and celebrations">
+  <div class="wrap">
+    <div class="promoHeading">
+      <div><span>VIJAY CONNECT • OFFERS & CELEBRATIONS</span><h2 id="promoTitle">Latest offers & celebrations</h2><p id="promoDesc">Special fares, festival announcements and limited-time offers from Vijay Connect.</p></div>
+    </div>
+    <div class="promoHeroRail" id="promoHeroRail"></div>
+  </div>
+</section>
+
+<section class="whySection" id="why"><div class="wrap"><div class="sectionHead"><span id="whyEyebrow">WHY VIJAY CONNECT</span><h2 id="whyTitle">More than a ride. A better connection.</h2><p id="whyDesc">Designed around the little things that make every Chennai journey feel easier.</p></div><div class="whyGrid"><article class="whyCard reveal"><div class="whyIcon">01</div><h3 id="why1Title">On-Time Focus</h3><p id="why1Desc">Clear pickup coordination and a service experience built around your schedule.</p></article><article class="whyCard reveal"><div class="whyIcon">02</div><h3 id="why2Title">Comfort First</h3><p id="why2Desc">Choose the right car for solo rides, family travel, business and special occasions.</p></article><article class="whyCard reveal"><div class="whyIcon">03</div><h3 id="why3Title">Chennai Local</h3><p id="why3Desc">Focused on Chennai and nearby areas, so your booking stays simple and relevant.</p></article><article class="whyCard reveal"><div class="whyIcon">04</div><h3 id="why4Title">Human Support</h3><p id="why4Desc">Easy direct contact when you need help before or during your journey.</p></article></div></div></section>
+
+
+
+<!-- Customer reviews: add REAL customer reviews here once you have them (Google reviews recommended). -->
+
+<section class="areaSection" id="areas"><div class="wrap"><div class="sectionHead"><span>CHENNAI SERVICE AREA</span><h2 id="areasTitle">Chennai + Nearby</h2><p id="areasDesc">Explore Chennai from the centre. Tap any area name to open its dedicated route, fare and travel details.</p></div>
+<div class="areaExperience">
+  <div class="areaMapCard areaMapCardFull">
+    <div class="mapTop"><span>CHENNAI & NEARBY</span><small>Tap a place to view route</small></div>
+    <div class="areaMap" id="areaMap">
+      <div class="mapHalo"></div><div class="mapLines"></div><div class="areaCore"><div class="pulse"></div><strong>CHENNAI</strong><small>Our home base</small></div>
+      <div class="areaOrbit" id="areaOrbit"></div>
+    </div>
+    <div class="areaMore" id="areaMore"></div>
+    <div class="areaMapFooter"><span><b>20+</b> Chennai service areas</span><a href="route-details.html">View all Chennai routes & fares →</a></div>
+  </div>
+</div></div></section>
+
+<section id="about" class="about"><div class="wrap aboutGrid"><div class="reveal"><span id="aboutEyebrow">ABOUT VIJAY CONNECT</span><h2 id="aboutTitle">Connected to Chennai.<br>Committed to your journey.</h2><p id="aboutDesc">Vijay Connect is a Chennai-focused car service brand built around comfortable travel, simple booking and dependable customer support.</p><a class="btn purple" href="#contact">Talk to Us</a></div><div class="numbers"><div class="reveal"><b data-count="1">01</b><small>Chennai Focus</small></div><div class="reveal"><b data-count="24">24/7</b><small>Booking Support</small></div><div class="reveal"><b data-count="100">100%</b><small>Customer First</small></div><div class="reveal"><b>24×7</b><small>Quick Contact</small></div></div></div></section>
+
+<section class="updates" id="updatesSection" style="display:none"><div class="wrap"><span>FESTIVAL & CAMPAIGNS</span><h2 id="updatesTitle">Make Every Occasion Special</h2><p id="updatesDesc">Festival banners, seasonal offers and announcements are updated by the Vijay Connect team.</p></div></section>
+
+<section id="contact" class="contact"><div class="wrap bookingWrap">
+<div class="bookingIntro"><span>QUICK BOOKING</span><h2 id="bookingTitle">Book your car in a few simple steps.</h2><p id="bookingDesc">Just tell us <b>From → To</b>, travel date and your contact details. We’ll confirm the car and fare with you directly.</p><div class="bookingTrust"><span>✓ Chennai & nearby</span><span>✓ Easy WhatsApp confirmation</span><span>✓ Human support</span></div><div class="vcSavedQuick" id="vcSavedQuick" hidden><button type="button" data-save-place="home">＋ Save pickup as Home</button><button type="button" data-save-place="work">＋ Save pickup as Work</button></div><div class="contactMini"><p>📞 <a href="tel:+918056631317">+91 80566 31317</a></p><p>✉ <a href="mailto:contactvijaytechnocarft@gmail.com">contactvijaytechnocarft@gmail.com</a></p></div></div>
+<form id="bookingForm" class="bookingForm">
+<div class="bookingStepOne" id="bookingStepOne">
+<div class="bookingHead"><div><small>STEP 1</small><strong>Choose your journey</strong></div><span class="bookingBadge">FAST BOOKING</span></div>
+<div class="serviceTabs" role="tablist"><button type="button" class="serviceTab active" data-service="One Way Trip">One Way</button><button type="button" class="serviceTab" data-service="Outstation">Outstation</button><button type="button" class="serviceTab" data-service="Hourly Rental">Rental</button></div>
+<input type="hidden" id="bookingService" value="One Way Trip">
+<div class="fieldGrid two"><label class="smartField">From<div class="vcFromInputWrap"><input id="fromPlace" required placeholder="Area / airport / station / landmark" autocomplete="off"><button type="button" class="vcClearLocationBtn" id="vcClearLocationBtn" aria-label="Clear pickup location" title="Clear pickup location">×</button></div><div class="smartSuggestions" id="fromSuggestions"></div><button type="button" class="vcUseLocationBtn" id="vcUseLocationBtn">📍 Use my current location</button><small class="vcLocationStatus" id="vcLocationStatus" aria-live="polite"></small></label><label class="smartField">To<input id="toPlace" required placeholder="Area / theatre / mall / landmark" autocomplete="off"><div class="smartSuggestions" id="toSuggestions"></div></label></div>
+<div class="vcCurrentLocationCard" id="vcCurrentLocationCard" hidden><div class="vcLocationCardHead"><div><span>YOUR CURRENT LOCATION</span><strong id="vcCurrentLocationName">Finding your location…</strong><small id="vcCurrentLocationCoords"></small></div><button type="button" id="vcLocationCenterBtn">Center</button></div><div class="vcMiniMap" id="vcMiniMap"></div></div>
+<div class="fieldGrid two"><label>Travel Date<input id="travelDate" type="date" required></label><label>Pickup Time<input id="pickupTime" type="time" required></label></div>
+<div class="fieldGrid two" id="oneWayRow" hidden><label>Passengers<select id="oneWayPassengers"><option>1 Passenger</option><option>2 Passengers</option><option>3 Passengers</option><option>4 Passengers</option><option>5+ Passengers</option></select></label></div>
+<div class="fieldGrid two" id="returnRow" hidden><label>Return Date<input id="returnDate" type="date"></label><label>Passengers<select id="outstationPassengers"><option>1 Passenger</option><option>2 Passengers</option><option>3 Passengers</option><option>4 Passengers</option><option>5+ Passengers</option></select></label></div>
+<div class="fieldGrid two" id="rentalRow" hidden><label>Rental Hours<select id="rentalHours"><option>4 Hours</option><option>8 Hours</option><option>12 Hours</option><option>Full Day</option></select></label><label>Passengers<select id="rentalPassengers"><option>1 Passenger</option><option>2 Passengers</option><option>3 Passengers</option><option>4 Passengers</option><option>5+ Passengers</option></select></label></div>
+<div class="fieldGrid"><label>Mobile Number<input id="customerPhone" type="tel" required inputmode="numeric" pattern="[6-9][0-9]{9}" minlength="10" maxlength="10" title="Enter a valid 10-digit Indian mobile number" autocomplete="tel-national" placeholder="10-digit mobile number"></label></div>
+<div class="bookingStepActions"><button class="btn purple bookingContinue" id="bookingContinue" type="button"><span>Continue</span><b>→</b></button></div>
+</div>
+
+<div class="bookingVehicleStep" id="bookingVehicleStep" hidden>
+  <div class="bookingHead bookingHeadSecond"><div><small>STEP 2</small><strong>Choose your car</strong></div><span class="bookingBadge">FARE PREVIEW</span></div>
+  <div class="bookingRouteMini"><span>YOUR TRIP</span><strong id="bookingTripSummary">Chennai → Your destination</strong><small id="bookingFareHint">Choose the car that suits you best.</small></div>
+  <div class="bookingVehicleGrid" id="bookingVehicleGrid">
+    <button type="button" class="bookingVehicleCard" data-booking-vehicle="mini"><span>MINI</span><strong id="bookingMiniPrice">Price on request</strong><small>Smart & economical</small><i>Best value</i></button>
+    <button type="button" class="bookingVehicleCard selected" data-booking-vehicle="sedan"><span>SEDAN</span><strong id="bookingSedanPrice">Price on request</strong><small>Comfort choice</small><i>Popular</i></button>
+    <button type="button" class="bookingVehicleCard" data-booking-vehicle="suv"><span>SUV</span><strong id="bookingSuvPrice">Price on request</strong><small>More space & comfort</small><i>Extra space</i></button>
+  </div>
+  <div class="bookingSelectedBar"><span>Selected car</span><strong id="bookingSelectedLabel">Sedan</strong><b id="bookingSelectedPrice">Price on request</b></div>
+  <label>Special Request <textarea id="specialRequest" rows="3" placeholder="Airport pickup, child seat, extra luggage, etc. (optional)"></textarea></label>
+  <div class="bookingBackRow"><button type="button" class="bookingBack" id="bookingBack">← Change trip details</button><button class="btn purple bookingSubmit" id="bookingSubmit" type="submit"><span>Confirm Booking</span><b>→</b></button></div>
+  <small class="bookingNote">Review your trip and car. Confirm your request, then WhatsApp opens with your details ready. Tap Send to complete the booking request.</small>
+</div>
+<div class="bookingProgress" id="bookingProgress"><span class="active">1</span><i></i><span>2</span><small>Trip details → Car → Confirmed</small></div>
+</form></div></section>
+<div class="mobileActionBar"><a href="tel:+918056631317">☎ <span id="mobileCallLabel">Call</span></a><a class="wa" href="https://wa.me/918056631317?text=Hi%20Vijay%20Connect,%20I%20need%20a%20car%20service." target="_blank" rel="noopener">◉ <span id="mobileWhatsAppLabel">WhatsApp</span></a><a href="#contact">↗ <span id="mobileBookLabel">Book</span></a></div><footer><div class="footerBrand"><img src="logo-black.png" alt="Vijay Connect logo"><strong>VIJAY CONNECT</strong></div><p id="footerTag">Built around Chennai. Connected to every journey.</p><div class="footerLinks"><a id="footerHome" href="#home">Home</a><a id="footerServices" href="#services">Services</a><a id="footerAreas" href="#areas">Areas</a><a id="footerContact" href="#contact">Contact</a></div><small>© 2026 Vijay Connect • Chennai</small></footer>
+<script src="vc-supabase.js"></script><script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" crossorigin=""></script><script src="script.js"></script><script>
+(function(){
+  function wireAuth(){
+    const modal=document.getElementById('vcAuthModal');
+    const open=()=>{if(modal){modal.classList.add('is-open');modal.setAttribute('aria-hidden','false');document.body.classList.add('vc-modal-open');}};
+    const header=document.getElementById('vcHeaderAuth'), mobile=document.getElementById('vcMobileSignIn');
+    if(header && !header.dataset.vcWired){header.dataset.vcWired='1';header.addEventListener('click',open);}
+    if(mobile && !mobile.dataset.vcWired){mobile.dataset.vcWired='1';mobile.addEventListener('click',open);}
+    let signed=false;
+    try { signed=!!JSON.parse(localStorage.getItem('vcCustomerSession')||'null')?.access_token; } catch(e){}
+    let dismissed=false; try{dismissed=sessionStorage.getItem('vcAuthDismissed')==='1';}catch(e){}
+    if(signed){if(header)header.hidden=true;if(mobile)mobile.hidden=true;}
+  }
+  if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',wireAuth);else wireAuth();
+})();
+</script><div class="vcTrackFloat"><a href="track.html" aria-label="Track your cab">📍 <span>Track Cab</span></a></div>
+
+</body></html>

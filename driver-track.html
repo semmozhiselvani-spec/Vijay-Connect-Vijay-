@@ -1,0 +1,42 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="robots" content="noindex,nofollow"><meta name="theme-color" content="#6d28d9"><title>Driver Live Location | Vijay Connect</title><link rel="icon" href="logo-black.png" type="image/png"><style>body{margin:0;background:#faf8fd;font-family:Inter,Arial,sans-serif;color:#2d2436}.wrap{max-width:560px;margin:30px auto;padding:18px}.card{background:#fff;border:1px solid #e6dcef;border-radius:24px;padding:25px;box-shadow:0 20px 60px #32106412}h1{margin:7px 0;font-size:26px}.muted{color:#887b92;font-size:11px;line-height:1.6}.badge{font-size:9px;letter-spacing:1.7px;color:#5a20d6;font-weight:900}.field{margin-top:15px}.field label{display:block;font-size:10px;font-weight:900;color:#554862}.field input{box-sizing:border-box;width:100%;margin-top:6px;padding:12px;border:1px solid #ded3e9;border-radius:12px;outline:0;font-size:14px}.btn{width:100%;border:0;border-radius:12px;padding:13px;margin-top:15px;background:#5a20d6;color:#fff;font-weight:900;cursor:pointer}.btn.stop{background:#9f3150}.status{margin-top:12px;font-size:10px;font-weight:800;min-height:16px}.good{color:#21834a}.warn{color:#b04444}.coords{margin-top:13px;padding:12px;border-radius:12px;background:#faf8fd;border:1px solid #eee7f5;font-size:10px;color:#6e617a}.coords b{color:#4f1ac0}</style></head><body><main class="wrap"><section class="card"><div class="badge">VIJAY CONNECT • DRIVER</div><h1>Start live cab location</h1><p class="muted">Enter the tracking code (booking ID) and your private driver code. Keep this page open and the screen on while driving. Location sharing uses the phone's GPS.</p>
+<div class="field"><label>Tracking code (booking ID)<input id="code" placeholder="VC-A1B2C3" autocomplete="off" autocapitalize="characters"></label></div>
+<div class="field"><label>Driver code<input id="driverCode" type="password" placeholder="Private code given by Vijay Connect" autocomplete="off"></label></div>
+<div class="field"><label>Driver name<input id="driver" placeholder="Driver name" autocomplete="name"></label></div>
+<button class="btn" id="start">Start Live Location</button><button class="btn stop" id="stop" style="display:none">Stop Sharing</button><div class="status" id="status" role="status" aria-live="polite"></div><div class="coords" id="coords">GPS: <b>Not started</b></div></section></main><script src="vc-supabase.js"></script><script>
+const cfg=window.VC_SUPABASE_CONFIG,base=()=>String(cfg?.url||'').replace(/\/+$/,'');
+let watch=null,code='',driverCode='',lastSent=0,wakeLock=null;
+const $=id=>document.getElementById(id);
+function status(t,c=''){const e=$('status');e.textContent=t;e.className='status '+c}
+async function rpc(name,body){
+  const r=await fetch(base()+'/rest/v1/rpc/'+name,{method:'POST',headers:{apikey:cfg.key,Authorization:'Bearer '+cfg.key,'Content-Type':'application/json'},body:JSON.stringify(body)});
+  if(!r.ok){let m='';try{m=(await r.json()).message||''}catch(e){}throw new Error(/invalid driver code/i.test(m)?'Wrong driver code.':/invalid tracking code/i.test(m)?'Invalid tracking code.':('Could not update live location ('+r.status+')'))}
+  return true;
+}
+async function keepAwake(){try{if('wakeLock' in navigator)wakeLock=await navigator.wakeLock.request('screen')}catch(e){}}
+document.addEventListener('visibilitychange',()=>{if(document.visibilityState==='visible'&&watch!==null)keepAwake()});
+function reset(){watch=null;$('start').style.display='block';$('stop').style.display='none';try{wakeLock?.release()}catch(e){}wakeLock=null}
+try{$('driver').value=localStorage.getItem('vcDriverName')||''}catch(e){}
+$('start').onclick=()=>{
+  code=$('code').value.trim().toUpperCase();driverCode=$('driverCode').value.trim();
+  if(!code){status('Enter the tracking code.','warn');return}
+  if(!driverCode){status('Enter your driver code.','warn');return}
+  if(!navigator.geolocation){status('This phone does not support GPS location.','warn');return}
+  try{localStorage.setItem('vcDriverName',$('driver').value.trim())}catch(e){}
+  status('Requesting GPS permission…');lastSent=0;
+  watch=navigator.geolocation.watchPosition(async p=>{
+    const lat=p.coords.latitude,lng=p.coords.longitude;
+    $('coords').innerHTML='GPS: <b>'+lat.toFixed(6)+', '+lng.toFixed(6)+'</b>';
+    if(Date.now()-lastSent<5000)return; lastSent=Date.now();
+    try{await rpc('vc_push_cab_location',{p_driver_code:driverCode,p_booking_code:code,p_lat:lat,p_lng:lng,p_driver_name:$('driver').value.trim()||null});status('✓ Live location is being shared.','good')}
+    catch(e){status('⚠️ '+e.message,'warn');if(/driver code|tracking code/i.test(e.message)){navigator.geolocation.clearWatch(watch);reset()}}
+  },e=>status('GPS error — '+e.message,'warn'),{enableHighAccuracy:true,maximumAge:5000,timeout:15000});
+  $('start').style.display='none';$('stop').style.display='block';keepAwake();
+};
+$('stop').onclick=async()=>{
+  if(watch!==null)navigator.geolocation.clearWatch(watch);
+  reset();
+  try{await rpc('vc_stop_cab_location',{p_driver_code:driverCode,p_booking_code:code})}catch(e){}
+  status('Location sharing stopped.','warn');
+};
+const q=new URLSearchParams(location.search);if(q.get('booking'))$('code').value=q.get('booking').toUpperCase();
+</script></body></html>
